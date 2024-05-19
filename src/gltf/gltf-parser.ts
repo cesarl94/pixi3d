@@ -212,28 +212,54 @@ export class glTFParser {
    * @param source The source object or index.
    */
   parseTexture(index: number) {
-    const texture = this._descriptor.textures[index]
-    const image = this._asset.images[texture.source]
-    const result = new Texture(new BaseTexture(image.baseTexture.resource, {
-      wrapMode: WRAP_MODES.REPEAT,
-      // Went back and forth about NO_PREMULTIPLIED_ALPHA. The default in
-      // PixiJS is to have premultiplied alpha textures, but this may not work
-      // so well when rendering objects as opaque (which have alpha equal to 0).
-      // In that case it's impossible to retrieve the original RGB values, 
-      // because they are all zero when using premultiplied alpha. Both the glTF
-      // Sample Viewer and Babylon.js uses NO_PREMULTIPLIED_ALPHA so decided to
-      // do the same.
-      alphaMode: ALPHA_MODES.NO_PREMULTIPLIED_ALPHA
-    }))
+    const texture = this._descriptor.textures[index];
+    const image = this._asset.images[this.findTextureSource(texture)];
+    const result = new Texture(
+      new BaseTexture(image.baseTexture.resource, {
+        wrapMode: WRAP_MODES.REPEAT,
+        // Went back and forth about NO_PREMULTIPLIED_ALPHA. The default in
+        // PixiJS is to have premultiplied alpha textures, but this may not work
+        // so well when rendering objects as opaque (which have alpha equal to 0).
+        // In that case it's impossible to retrieve the original RGB values,
+        // because they are all zero when using premultiplied alpha. Both the glTF
+        // Sample Viewer and Babylon.js uses NO_PREMULTIPLIED_ALPHA so decided to
+        // do the same.
+        alphaMode: ALPHA_MODES.NO_PREMULTIPLIED_ALPHA,
+      })
+    );
     if (this._descriptor.samplers && texture.sampler !== undefined) {
-      const sampler = this._descriptor.samplers[texture.sampler]
+      const sampler = this._descriptor.samplers[texture.sampler];
       switch (sampler.wrapS) {
-        case 10497: result.baseTexture.wrapMode = WRAP_MODES.REPEAT; break
-        case 33648: result.baseTexture.wrapMode = WRAP_MODES.MIRRORED_REPEAT; break
-        case 33071: result.baseTexture.wrapMode = WRAP_MODES.CLAMP; break
+        case 10497:
+          result.baseTexture.wrapMode = WRAP_MODES.REPEAT;
+          break;
+        case 33648:
+          result.baseTexture.wrapMode = WRAP_MODES.MIRRORED_REPEAT;
+          break;
+        case 33071:
+          result.baseTexture.wrapMode = WRAP_MODES.CLAMP;
+          break;
       }
     }
-    return result
+    return result;
+  }
+
+  findTextureSource(obj) {
+    // Base case: Check if the current object directly contains the `source` key
+    if (obj && typeof obj === "object" && "source" in obj) {
+      return obj.source;
+    }
+
+    // Recursively check each key in the object
+    for (const key in obj) {
+      if (obj[key] && typeof obj[key] === "object") {
+        const result = this.findTextureSource(obj[key]);
+        if (result !== undefined) {
+          return result;
+        }
+      }
+    }
+    return undefined;
   }
 
   /**
