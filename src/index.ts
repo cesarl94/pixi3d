@@ -45,6 +45,8 @@ export { StandardMaterialNormalTexture } from "./material/standard/standard-mate
 export { StandardMaterialOcclusionTexture } from "./material/standard/standard-material-occlusion-texture"
 export { StandardMaterialTexture } from "./material/standard/standard-material-texture"
 export { InstancedStandardMaterial } from "./material/standard/instanced-standard-material"
+export { StandardSurfaceMaterial } from "./material/standard-surface/standard-surface-material"
+export { InstancedStandardSurfaceMaterial } from "./material/standard-surface/instanced-standard-surface-material"
 export { PickingHitArea } from "./picking/picking-hitarea"
 export { PickingInteraction } from "./picking/picking-interaction"
 export { Skin } from "./skinning/skin"

@@ -9,6 +9,13 @@ export enum StandardMaterialAlphaMode {
    * to simulate geometry such as tree leaves or wire fences.
    */
   mask = "mask",
+
+  /**
+   * It allows you to simulate semi-transparent surfaces applying a dithering algorithm
+   * to draw each pixel either fully opaque or transparent depending on the provided
+   * pixel alpha value
+   */
+  dither = "dither",
   /**
    * The rendered output is combined with the background using the normal 
    * painting operation (i.e. the Porter and Duff over operator). This mode is 
